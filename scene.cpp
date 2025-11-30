@@ -52,7 +52,7 @@ static void tile(double w, double d, int nw, int nd)
   glEnd();
 }
 
-/*static void box(double x, double y, double z, double width, double height, double depth, int numblack)
+static void box(double x, double y, double z, double width, double height, double depth, int numblack)
 {
   const GLdouble vertex[][3] = {
     { 0.0, 0.0, 0.0 },
@@ -101,7 +101,7 @@ static void tile(double w, double d, int nw, int nd)
   }
   glEnd();
   glPopMatrix();
-}*/
+}
 
 static void drawTileQuad(GLdouble v0[3], GLdouble v1[3], GLdouble v2[3], GLdouble v3[3],
                          const GLdouble normal[3])
@@ -148,7 +148,7 @@ static void drawTileQuad(GLdouble v0[3], GLdouble v1[3], GLdouble v2[3], GLdoubl
     glEnd();
 }
 
-static void box(double x, double y, double z,
+static void wall(double x, double y, double z,
                 double width, double height, double depth,
                 int numblack)
 {
@@ -334,9 +334,6 @@ void scene(double t)
   static const GLfloat red[] = { 0.8, 0.2, 0.2, 1.0 };
   static const double r = 1.5;
   double wt = 2.0 * PI * t;
-  
-  /*if(cam.pos_z>=8 && cam.pos_z<=20 && cam.pos_x <= 20 &&  cam.pos_x >= 14 )
-  trap(-20,0,-20);*/
 
   // Display ground
   glPushMatrix();
@@ -344,170 +341,20 @@ void scene(double t)
   tile(1.0, 1.0, 100, 100);
   glPopMatrix();
 
-
   // Display walls
-  box(-18, 0, 0, 15.0, 4.0, 0.2, 0);
-  box(-3, 0, 0, 0.2, 4.0, 10.0, 0);
-  box(2, 0, -5, 0.2, 4.0, 15.0, 0);
-  box(-13, 0, -5, 15.0, 4.0, 0.2, 0);
-  box(-18, 0, -25, 0.2, 4.0, 25.0, 0);
-  box(-13, 0, -30, 0.2, 4.0, 25.0, 0);
-  box(-28, 0, -25, 10.0, 4.0, 0.2, 0);
-  box(-23, 0, -30, 10.0, 4.0, 0.2, 0);
-  box(-28, 0, -40, 0.2, 4.0, 15.0, 0);
-  box(-23, 0, -45, 0.2, 4.0, 15.0, 0);
-  box(-38, 0, -40, 10.0, 4.0, 0.2, 0);
-  box(-33, 0, -45, 10.0, 4.0, 0.2, 0);
+  wall(-18, 0, 0, 15.0, 4.0, 0.2, 0);
+  wall(-3, 0, 0, 0.2, 4.0, 10.0, 0);
+  wall(2, 0, -5, 0.2, 4.0, 15.0, 0);
+  wall(-13, 0, -5, 15.0, 4.0, 0.2, 0);
+  wall(-18, 0, -25, 0.2, 4.0, 25.0, 0);
+  wall(-13, 0, -30, 0.2, 4.0, 25.0, 0);
+  wall(-28, 0, -25, 10.0, 4.0, 0.2, 0);
+  wall(-23, 0, -30, 10.0, 4.0, 0.2, 0);
+  wall(-28, 0, -40, 0.2, 4.0, 15.0, 0);
+  wall(-23, 0, -45, 0.2, 4.0, 15.0, 0);
+  wall(-38, 0, -40, 10.0, 4.0, 0.2, 0);
+  wall(-33, 0, -45, 10.0, 4.0, 0.2, 0);
 
-
-  /*box(-17, 3, 0,2.0, 1.0, 0.2,0);
-  box(-17, 1.9, 0,2.0, 0.2, 0.2,0);
-  box(-16, 1, 0,0.2, 2.0, 0.2,0);
-  box(-17, 0, 0,2.0, 1.0, 0.2,0);
-
-  box(-15, 0, 0,3.0, 4.0, 0.2,0);
-
-  box(-12, 3, 0,2.0, 1.0, 0.2,0);
-  box(-12, 1.9, 0,2.0, 0.2, 0.2,0);
-  box(-11, 1, 0,0.2, 2.0, 0.2,0);
-  box(-12, 0, 0,2.0, 1.0, 0.2,0);
-
-  box(-10, 0, 0,3.0, 4.0, 0.2,0);
-
-  box(-7, 3, 0,2.0, 1.0, 0.2,0);
-  box(-7, 1.9, 0,2.0, 0.2, 0.2,0);
-  box(-6, 1, 0,0.2, 2.0, 0.2,0);
-  box(-7, 0, 0,2.0, 1.0, 0.2,0);
-
-  box(-5, 0, 0,4.0, 4.0, 0.2,0);
-
-  box(-1, 3, 0,2.0, 1.0, 0.2,0);*/
-
-  /*glPushMatrix();
-  glTranslated(-1,0,0.2);
-  if(door1 == false){
-    door1theta++;
-  }else{
-    door1theta--;
-  }
-  if(door1theta > 0){
-    door1theta=0;
-  }else if(door1theta < -90){
-    door1theta = -90;
-  }
-  if(door1theta == 0 && cam.pos_z > 0){
-    setlight();
-  }else{
-    rmlight();
-  }
-  glRotated(door1theta,0,1,0);
-  glTranslated(0,0,-0.2);
-  doorbox(0, 0, 0,2.0, 3.0, 0.2,0);
-  glPopMatrix();*/
-
-  /*box(1, 0, 0,4.0, 4.0, 0.2,0);
-
-  // �Ȥκ�¦��
-  box(-20, 0, -20,0.2, 4.0, 20.0,-1);
-
-  //�Ȥ�ŷ��
-  box(-20, 4.0, -20,25,0.2,20.2,4);
-
-  // �Ȥα�¦��
-  box(4.8, 0, -20,0.2, 4.0, 1.0,3);
-
-  box(4.8, 3, -19,0.2, 1.0, 2.0,3);
-  box(4.8, 1.9, -19,0.2, 0.2, 2.0,3);
-  box(4.8, 1, -18,0.2, 2.0, 0.2,3);
-  box(4.8, 0, -19,0.2, 1.0, 2.0,3);
-
-  box(4.8, 0, -17,0.2, 4.0, 3.0,3);
-
-  box(4.8, 3, -14,0.2, 1.0, 2.0,3);
-  box(4.8, 1.9, -14,0.2, 0.2, 2.0,3);
-  box(4.8, 1, -13,0.2, 2.0, 0.2,3);
-  box(4.8, 0, -14,0.2, 1.0, 2.0,3);
-
-  box(4.8, 0, -12,0.2, 4.0, 4.0,3);
-
-  box(4.8, 3, -8,0.2, 1.0, 2.0,3);
-  box(4.8, 1.9, -8,0.2, 0.2, 2.0,3);
-  box(4.8, 1, -7,0.2, 2.0, 0.2,3);
-  box(4.8, 0, -8,0.2, 1.0, 2.0,3);
-
-  box(4.8, 0, -6,0.2, 4.0, 1.0,3);
-
-  box(4.8, 3, -5,0.2, 1.0, 2.0,3);
-  box(4.8, 0, -5,0.2, 1.0, 2.0,3);
-  box(4.8, 1.9, -5,0.2, 0.2, 2.0,3);
-  box(4.8, 1, -4,0.2, 2.0, 0.2,3);
-  box(4.8, 0, -3,0.2, 4.0, 3.0,3);
-
-  // �Ȥα�¦
-  box(-20, 0.0, -20,25,4.0,0.2,-1);*/
-
-  /*glPushMatrix();
-  glTranslated(0,0,-6);
-  box(-13.8, 0, 0,3.8, 4.0, 0.2,0);
-  box(-10, 3, 0,2.0, 1.0, 0.2,0);
-  glPushMatrix();
-  glTranslated(-10,0,0.2);
-  if(door2 == false){
-    door2theta++;
-  }else{
-    door2theta--;
-  }
-  if(door2theta > 0){
-    door2theta=0;
-  }else if(door2theta < -90){
-    door2theta = -90;
-  }
-  glRotated(door2theta,0,1,0);
-  glTranslated(0,0,-0.2);
-  box(0, 0, 0,2.0, 3.0, 0.2,0);
-  glPopMatrix();
-  box(-8, 0, 0,13.0, 4.0, 0.2,0);
-  glPopMatrix();*/
-
-  // �Ȥ���-��¦��
-  /*box(-14, 0, -20,0.2, 4.0, 14.2,3);*/
-  
-  /* ������� */
-  // glPushMatrix();
-  // glTranslated(-10,1,4);
-  // glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, red);
-  // glutSolidSphere(0.9, 32, 16);
-  // glPopMatrix();
-
-  // ��ʬ�α���box
-  glPushMatrix();
-  glTranslated(-cam.pos_x, -cam.pos_y, -cam.pos_z);
-  glRotated(-cam.eye_x,0,1,0);
-  glRotated(-cam.eye_y,1,0,0);
-  glTranslated(0,-2,0);
-  // ƹ��
-  /*box(-0.3,-6,-0.3,0.6,7.5,0.6,-1);
-    // Ƭ
-    glPushMatrix();
-    glTranslated(0,2.5,0);
-    glutSolidSphere(0.5, 32, 16);
-    glPopMatrix();
-
-    // ����
-    glPushMatrix();
-    glTranslated(0.6,0.2,-0.3);
-    glRotated(15,0,0,1);
-    box(0,0,0,0.3,1.2,0.3,-1);
-    glPopMatrix();
-
-    // ����
-    glPushMatrix();
-    glTranslated(-0.85,0.3,-0.3);
-    glRotated(-15,0,0,1);
-    box(0,0,0,0.3,1.2,0.3,-1);
-    glPopMatrix();*/
-
-  glPopMatrix();
 }
 
 void textureInit(void) {
