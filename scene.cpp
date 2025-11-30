@@ -159,14 +159,13 @@ static void box(double x, double y, double z,
 
     /* 面の法線 */
     const GLdouble normals[6][3] = {
-        {  0,  0, -1 }, // 前
-        {  1,  0,  1 }, // 後 ★ 下で正しく指定（typo無し）
-        {  1,  0,  0 }, // 右
-        { -1,  0,  0 }, // 左
-        {  0, -1,  0 }, // 底
-        {  0,  1,  0 }, // 天井
+        {  0,  0, -1 }, // Z=0（前）
+        {  0,  0,  1 }, // Z=depth（後）
+        {  1,  0,  0 }, // X=width（右）
+        { -1,  0,  0 }, // X=0（左）
+        {  0, -1,  0 }, // Y=0（底）
+        {  0,  1,  0 }, // Y=height（天井）
     };
-
     /*===========================
         Z = 0 面（前面）
     ===========================*/
@@ -174,9 +173,9 @@ static void box(double x, double y, double z,
     for(double iy = 0; iy < height; iy += tile){
         for(double ix = 0; ix < width; ix += tile){
             GLdouble v0[3]={ix,      iy,      0};
-            GLdouble v1[3]={ix+tile, iy,      0};
+            GLdouble v1[3]={ix,      iy+tile, 0};
             GLdouble v2[3]={ix+tile, iy+tile, 0};
-            GLdouble v3[3]={ix,      iy+tile, 0};
+            GLdouble v3[3]={ix+tile, iy,      0};
             drawTileQuad(v0, v1, v2, v3, normals[0]);
         }
     }
@@ -184,13 +183,16 @@ static void box(double x, double y, double z,
     /*===========================
         Z = depth 面（背面）
     ===========================*/
-    glNormal3dv(normals[1]);
+    glNormal3dv(normals[1]); // {0, 0, 1}
+
     for(double iy = 0; iy < height; iy += tile){
         for(double ix = 0; ix < width; ix += tile){
+
             GLdouble v0[3]={ix,      iy,      depth};
             GLdouble v1[3]={ix+tile, iy,      depth};
             GLdouble v2[3]={ix+tile, iy+tile, depth};
             GLdouble v3[3]={ix,      iy+tile, depth};
+
             drawTileQuad(v0, v1, v2, v3, normals[1]);
         }
     }
@@ -212,13 +214,13 @@ static void box(double x, double y, double z,
     /*===========================
         X = width 面（右）
     ===========================*/
-    glNormal3dv(normals[2]);
+    glNormal3dv(normals[2]); // {1,0,0}
     for(double iy = 0; iy < height; iy += tile){
         for(double iz = 0; iz < depth; iz += tile){
             GLdouble v0[3]={width, iy,      iz};
-            GLdouble v1[3]={width, iy,      iz+tile};
+            GLdouble v1[3]={width, iy+tile, iz};
             GLdouble v2[3]={width, iy+tile, iz+tile};
-            GLdouble v3[3]={width, iy+tile, iz};
+            GLdouble v3[3]={width, iy,      iz+tile};
             drawTileQuad(v0, v1, v2, v3, normals[2]);
         }
     }
