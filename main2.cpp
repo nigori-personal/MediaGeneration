@@ -187,9 +187,10 @@ static void display(void)
   }
   
   /* �����ΰ��֤����ꤹ�� */
-  glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+  //glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
   setSpotlight();
+  setFluorescentLight();
 
 
 #if USEALPHA
