@@ -20,6 +20,7 @@ UserSettings/
 *.booproj
 *.svd
 *.out
+*.exe
 
 # OS generated files
 .DS_Store

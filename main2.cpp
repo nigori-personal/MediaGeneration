@@ -1,8 +1,13 @@
+#ifdef _WIN32
+  #include <GL/glew.h>
+  #include <GL/freeglut.h>
+  #include <opencv4/opencv2/opencv.hpp>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 // #  define GL_GLEXT_PROTOTYPES
-#  include <GL/glut.h>
+#include <GL/glut.h>
 #include "camera.h"
 #include "scene.h"
 #include "light.h"
@@ -23,6 +28,7 @@ int width = TEXWIDTH, height = TEXHEIGHT;
 
 static void init(void)
 {
+  glewInit(); //if windows
   /* �ƥ�������γ������ */
   glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, TEXWIDTH, TEXHEIGHT, 0,
     GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);

@@ -1,3 +1,8 @@
+#ifdef _WIN32
+  #include <GL/glew.h>
+  #include <GL/freeglut.h>
+  #include <opencv4/opencv2/opencv.hpp>
+#endif
 #include <GL/glut.h>
 #include <opencv2/opencv.hpp>
 #include <math.h>
