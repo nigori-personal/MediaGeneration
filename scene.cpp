@@ -31,7 +31,7 @@ static void tile(double w, double d, int nw, int nd)
     for (i = 0; i < nw; ++i) {
       GLdouble wi = w * i, wiw = wi + w;
 
-      // Draw brack lines
+      // Draw black lines
       glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color[0]);
       glVertex3d(wi,  0.0, dj);
       glVertex3d(wi,  0.0, djd);
@@ -50,6 +50,44 @@ static void tile(double w, double d, int nw, int nd)
     }
   }
   glEnd();
+}
+
+static void ceiling(double w, double d, int nw, int nd)
+{
+    static const GLfloat color[][4] = {
+        {0.0, 0.0, 0.0, 1.0},
+        {1.0, 1.0, 1.0, 1.0}
+    };
+
+    glNormal3d(0.0, -1.0, 0.0);
+
+    glBegin(GL_QUADS);
+
+    for (int j = 0; j < nd; ++j) {
+        GLdouble dj = d * j, djd = dj + d;
+
+        for (int i = 0; i < nw; ++i) {
+            GLdouble wi = w * i, wiw = wi + w;
+
+            // Draw black lines
+            glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color[0]);
+            glVertex3d(wi,  6.0, djd);
+            glVertex3d(wi,  6.0, dj);
+            glVertex3d(wiw, 6.0, dj);
+            glVertex3d(wiw, 6.0, djd);
+
+            double marginW = w * 0.01;
+            double marginD = d * 0.01;
+
+            // Draw white squares
+            glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color[1]);
+            glVertex3d(wi + marginW,  5.99, djd - marginD);
+            glVertex3d(wi + marginW,  5.99, dj + marginD);
+            glVertex3d(wiw - marginW, 5.99, dj + marginD);
+            glVertex3d(wiw - marginW, 5.99, djd - marginD);
+        }
+    }
+    glEnd();
 }
 
 static void box(double x, double y, double z, double width, double height, double depth, int numblack)
@@ -84,7 +122,7 @@ static void box(double x, double y, double z, double width, double height, doubl
   };
   
   static const GLfloat black[] = { 0.2, 0.0, 0.0, 1.0 };
-  static const GLfloat color[] = { 0.8, 0.8, 1.0, 1.0 };
+  static const GLfloat color[] = { 0.8, 1.0, 1.0, 1.0 };
   
   int i, j;
   glPushMatrix();
@@ -340,6 +378,12 @@ void scene(double t)
   tile(1.0, 1.0, 100, 100);
   glPopMatrix();
 
+  // Display ceiling
+  glPushMatrix();
+  glTranslated(-50.0, 0.0, -50.0);
+  ceiling(1.0, 1.0, 100, 100);
+  glPopMatrix();
+
   // Display walls
   wall(-18, 0, 0, 15.0, 6.0, 0.2, 0);
   wall(-3, 0, 0, 0.2, 6.0, 10.0, 0);
@@ -355,14 +399,14 @@ void scene(double t)
   wall(-33, 0, -45, 10.0, 6.0, 0.2, 0);
 
   // Display lights
-  box(-2, 6, 2, 3.0, 0.1, 0.1, 0);
-  box(-2, 6, 1.8, 3.0, 0.1, 0.1, 0);
-  box(-17, 6, -8, 3.0, 0.1, 0.1, 0);
-  box(-17, 6, -8.2, 3.0, 0.1, 0.1, 0);
-  box(-17, 6, -18, 3.0, 0.1, 0.1, 0);
-  box(-17, 6, -18.2, 3.0, 0.1, 0.1, 0);
-  box(-27, 6, -38, 3.0, 0.1, 0.1, 0);
-  box(-27, 6, -38.2, 3.0, 0.1, 0.1, 0);
+  box(-2, 5.8, 2, 3.0, 0.1, 0.1, 0);
+  box(-2, 5.8, 1.8, 3.0, 0.1, 0.1, 0);
+  box(-17, 5.8, -8, 3.0, 0.1, 0.1, 0);
+  box(-17, 5.8, -8.2, 3.0, 0.1, 0.1, 0);
+  box(-17, 5.8, -18, 3.0, 0.1, 0.1, 0);
+  box(-17, 5.8, -18.2, 3.0, 0.1, 0.1, 0);
+  box(-27, 5.8, -38, 3.0, 0.1, 0.1, 0);
+  box(-27, 5.8, -38.2, 3.0, 0.1, 0.1, 0);
 }
 
 void textureInit(void) {
