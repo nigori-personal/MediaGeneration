@@ -135,7 +135,19 @@ void setSpotlight(){
 }
 
 void setFluorescentLight(){
-    setFluorescentPos(-0.5, 5.7, 2); // スポットライトと同じ位置
+    setFluorescentPos(-0.5, 5.7, 2);
     regFluorescent(GL_LIGHT2);
     glEnable(GL_LIGHT2);
+
+    setFluorescentPos(-15.5, 5.7, -8);
+    regFluorescent(GL_LIGHT3); 
+    glEnable(GL_LIGHT3);
+
+    setFluorescentPos(-15.5, 5.7, -18);
+    regFluorescent(GL_LIGHT5);
+    glEnable(GL_LIGHT5);
+
+    setFluorescentPos(-25.5, 5.7, -38);
+    regFluorescent(GL_LIGHT6);
+    glEnable(GL_LIGHT6);
 }

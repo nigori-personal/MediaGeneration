@@ -84,7 +84,7 @@ static void box(double x, double y, double z, double width, double height, doubl
   };
   
   static const GLfloat black[] = { 0.2, 0.0, 0.0, 1.0 };
-  static const GLfloat color[] = { 0.7, 0.3, 0.2, 1.0 };
+  static const GLfloat color[] = { 0.8, 0.8, 1.0, 1.0 };
   
   int i, j;
   glPushMatrix();
@@ -357,6 +357,12 @@ void scene(double t)
   // Display lights
   box(-2, 6, 2, 3.0, 0.1, 0.1, 0);
   box(-2, 6, 1.8, 3.0, 0.1, 0.1, 0);
+  box(-17, 6, -8, 3.0, 0.1, 0.1, 0);
+  box(-17, 6, -8.2, 3.0, 0.1, 0.1, 0);
+  box(-17, 6, -18, 3.0, 0.1, 0.1, 0);
+  box(-17, 6, -18.2, 3.0, 0.1, 0.1, 0);
+  box(-27, 6, -38, 3.0, 0.1, 0.1, 0);
+  box(-27, 6, -38.2, 3.0, 0.1, 0.1, 0);
 }
 
 void textureInit(void) {
