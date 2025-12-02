@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
   glutInit(&argc, argv);
   glutInitWindowSize(TEXWIDTH, TEXHEIGHT);
   glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-  glutCreateWindow("night house");
+  glutCreateWindow("exit n");
   glutDisplayFunc(display);
   glutReshapeFunc(resize);
   glutPassiveMotionFunc(passive_motion); // �ɥ�å���θƤӽФ�
