@@ -94,7 +94,16 @@ void makeWall(){
   }*/
 
   // collision detection
-  if(cam.pos_z < 0 && cam.pos_z > -15){
+  if(cam.pos_z <= -11 && cam.pos_z > -15){
+    if(cam.pos_x > 1.5){
+      cam.pos_x = 1.5;
+    }
+    if(cam.pos_z < -13.5 && cam.pos_x < 8) {
+      cam.pos_z = -13.5;
+    }
+  }
+
+  if(cam.pos_z < 0 && cam.pos_z > -11){
     if(cam.pos_x < -0.8){
       cam.pos_x = -0.8;
     }
@@ -144,10 +153,15 @@ void makeWall(){
 
   // teleport
   if(cam.pos_x < 28 && cam.pos_x > 23){
-    if(cam.pos_z >29){
+    if(cam.pos_z > 29){
       cam.pos_x = 0.0;
       cam.pos_z = -10.0;
     }
+  }
+
+  if(cam.pos_x < -1 && cam.pos_z <= -11 && cam.pos_z > -15){
+    cam.pos_x = 23;
+    cam.pos_z = 27;
   }
   
   // printf("%f %f %f\n",cam.pos_x,cam.pos_y,cam.pos_z);
