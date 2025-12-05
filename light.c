@@ -150,4 +150,8 @@ void setFluorescentLight(){
     setFluorescentPos(-25.5, 5.7, -38);
     regFluorescent(GL_LIGHT6);
     glEnable(GL_LIGHT6);
+
+    setFluorescentPos(9.5, 5.7, 22);
+    regFluorescent(GL_LIGHT7);
+    glEnable(GL_LIGHT7);
 }
