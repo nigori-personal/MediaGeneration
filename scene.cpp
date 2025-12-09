@@ -414,8 +414,6 @@ void scene(double t)
 
   // Display doors
 
-  // test
-  box(-2, 1, 2, 3.0, 3.0, 3.0, 0);
 }
 
 void textureInit(void) {

@@ -159,9 +159,9 @@ void makeWall(){
     }
   }
 
-  if(cam.pos_x < -5 && cam.pos_z <= -11 && cam.pos_z > -15){
-    cam.pos_x = -1;
-    cam.pos_z = -13;
+  if(cam.pos_x < -1 && cam.pos_z <= -11 && cam.pos_z > -15){
+    cam.pos_x = 23;
+    cam.pos_z = 27;
 
   }
   
