@@ -360,6 +360,27 @@ void trap(double x,double y,double z){
   glPopMatrix();
 }
 
+void texwall(double x, double y, double z, GLuint tex)
+{
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glNormal3d(0.0, 0.0, 1.0);
+
+    glBegin(GL_QUADS);
+      glTexCoord2d(0.0, 1.0);
+      glVertex3d(0.0, -1.0,  0.0);
+      glTexCoord2d(1.0, 1.0);
+      glVertex3d(2.0, -1.0,  0.0);
+      glTexCoord2d(1.0, 0.0);
+      glVertex3d(2.0,  1.0,  0.0);
+      glTexCoord2d(0.0, 0.0);
+      glVertex3d(0.0,  1.0,  0.0);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+
 bool door1 = false;
 int door1theta = 0;
 
@@ -412,8 +433,8 @@ void scene(double t)
   box(-27, 5.9, -38, 3.0, 0.1, 0.1, 0);
   box(-27, 5.9, -38.2, 3.0, 0.1, 0.1, 0);
 
-  // Display doors
-
+  // Display textured wall
+  texwall(0, 6, -4, texid_2);
 }
 
 void textureInit(void) {

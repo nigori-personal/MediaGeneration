@@ -12,60 +12,89 @@
 #include "scene.h"
 #include "light.h"
 
-static const GLfloat lightpos[] = { 35.0, 35.0, 35.0, 1.0 }; /* ���֡������������� */
-static const GLfloat lightcol[] = { -0.1, -0.1, -0.1, 1.0 }; /* ľ�ܸ����١������� */
-static const GLfloat lightdim[] = { -0.5, -0.5, -0.5, 1.0 }; /* ����γȻ�ȿ�Ͷ��� */
-static const GLfloat lightblk[] = { 0.0, 0.0, 0.0, 1.0 }; /* ����ζ���ȿ�Ͷ��� */
-static const GLfloat lightamb[] = { 0.1, 0.1, 0.1, 1.0 }; /* �Ķ������١������� */
+static const GLfloat lightpos[] = { 35.0, 35.0, 35.0, 1.0 };
+static const GLfloat lightcol[] = { -0.1, -0.1, -0.1, 1.0 };
+static const GLfloat lightdim[] = { -0.5, -0.5, -0.5, 1.0 };
+static const GLfloat lightblk[] = { 0.0, 0.0, 0.0, 1.0 };
+static const GLfloat lightamb[] = { 0.1, 0.1, 0.1, 1.0 };
 GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
 
 
-#define TEXWIDTH  512                                     /* �ƥ�������������� */
-#define TEXHEIGHT 512                                     /* �ƥ�������ι⤵�� */
+#define TEXWIDTH  360 // Texture Width                                
+#define TEXHEIGHT 480 // Texture Height
+GLuint  texid_2; 
+static const char texture2[] = "dora-360x480.raw";                        
 int width = TEXWIDTH, height = TEXHEIGHT;
 
-#define USEALPHA 1                                        /* ����ե��ƥ��Ȼ��� */
+#define USEALPHA 1  
 
 static void init(void)
 {
-  glewInit(); //if windows
-  /* �ƥ�������γ������ */
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, TEXWIDTH, TEXHEIGHT, 0,
-    GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+  glewInit(); // if windows
+
+  // Load Textures
+  GLubyte texture_buf2[TEXHEIGHT][TEXWIDTH][4];
+  FILE *fp;
+
+  if ((fp = fopen(texture2, "rb")) != NULL) {
+    fread(texture_buf2, sizeof texture_buf2, 1, fp);
+    fclose(fp);
+  }
+  else {
+    perror(texture2);
+  }
+
+  glGenTextures(1, &texid_2);  // Generate TextureID
+  glBindTexture(GL_TEXTURE_2D, texid_2);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, TEXWIDTH, TEXHEIGHT, GL_RGBA, GL_UNSIGNED_BYTE, texture_buf2);   
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  #if 0
+  // setting mixing colors
+  static const GLfloat blend[] = { 0.0, 1.0, 0.0, 1.0 };
+  glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, blend);
+  #endif
+
+  /*glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, TEXWIDTH, TEXHEIGHT, 0,
+    GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);*/
   
   /* �ƥ����������硦�̾�������ˡ�λ��� */
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   
   /* �ƥ�������η����֤���ˡ�λ��� */
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
   
   /* �񤭹���ݥꥴ��Υƥ��������ɸ�ͤΣҤȥƥ�������Ȥ���Ӥ�Ԥ��褦�ˤ��� */
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
   
   /* �⤷�Ҥ��ͤ��ƥ���������Ͱʲ��ʤ鿿�ʤĤޤ������� */
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
   
 // #if USEALPHA
 //   /* ��Ӥη�̤򥢥�ե��ͤȤ������� */
-  glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_ALPHA);
+  //glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_ALPHA);
   
   /* ����ե��ƥ��Ȥ���Ӵؿ��ʤ������͡� */
-  glAlphaFunc(GL_GEQUAL, 0.5f);
+  //glAlphaFunc(GL_GEQUAL, 0.5f);
 // #else
   /* ��Ӥη�̤����ͤȤ������� */
   // glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
 // #endif
   
   /* �ƥ��������ɸ�˻�����ɸ�Ϥˤ�����ʪ�Τκ�ɸ�ͤ��Ѥ��� */
-  glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+  /*glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
   glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
   glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-  glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+  glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);*/
 
   /* ���������ƥ��������ɸ�򤽤Τޤ� (S, T, R, Q) �˻Ȥ� */
-  static const GLdouble genfunc[][4] = {
+  /*`static const GLdouble genfunc[][4] = {
     { 1.0, 0.0, 0.0, 0.0 },
     { 0.0, 1.0, 0.0, 0.0 },
     { 0.0, 0.0, 1.0, 0.0 },
