@@ -294,71 +294,82 @@ static void wall(double x, double y, double z,
     glPopMatrix();
 }
 
-static void doorbox(double x, double y, double z, double width, double height, double depth, int numblack)
+static void door(double x, double y, double z,
+                 double width, double height, double depth, int numblack)
 {
-  const GLdouble vertex[][3] = {
-    { 0.0, 0.0, 0.0 },
-    {   width, 0.0, 0.0 },
-    {   width,   height, 0.0 },
-    { 0.0,   height, 0.0 },
-    { 0.0, 0.0,   depth },
-    {   width, 0.0,   depth },
-    {   width,   height,   depth },
-    { 0.0,   height,   depth },
-  };
-  
-  static const GLdouble *face[][4] = {
-    { vertex[0], vertex[1], vertex[2], vertex[3] },
-    { vertex[1], vertex[5], vertex[6], vertex[2] },
-    { vertex[5], vertex[4], vertex[7], vertex[6] },
-    { vertex[4], vertex[0], vertex[3], vertex[7] },
-    { vertex[4], vertex[5], vertex[1], vertex[0] },
-    { vertex[3], vertex[2], vertex[6], vertex[7] },
-  };
-  
-  static const GLdouble normal[][3] = {
-    { 0.0, 0.0,-1.0 },
-    { 1.0, 0.0, 0.0 },
-    { 0.0, 0.0, 1.0 },
-    {-1.0, 0.0, 0.0 },
-    { 0.0,-1.0, 0.0 },
-    { 0.0, 1.0, 0.0 },
-  };
-  
-  static const GLfloat black[] = { 0.1, 0.0, 0.0, 1.0 };
-  static const GLfloat color[] = { 0.3, 0.3, 0.2, 1.0 };
-  
-  int i, j;
-  glPushMatrix();
-  glTranslated(x,y,z);
-  
-  glBegin(GL_QUADS);
-  for (j = 0; j < 6; j++) {
-    glNormal3dv(normal[j]);
-    if(j==numblack){glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, black);}
-    else{glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);}
-    for (i = 4; --i >= 0;) {
-      glVertex3dv(face[j][i]);
+    const GLdouble vertex[][3] = {
+        { 0.0, 0.0, 0.0 },
+        { width, 0.0, 0.0 },
+        { width, height, 0.0 },
+        { 0.0, height, 0.0 },
+        { 0.0, 0.0, depth },
+        { width, 0.0, depth },
+        { width, height, depth },
+        { 0.0, height, depth },
+    };
+    
+    static const GLdouble *face[][4] = {
+        { vertex[0], vertex[1], vertex[2], vertex[3] },
+        { vertex[1], vertex[5], vertex[6], vertex[2] },
+        { vertex[5], vertex[4], vertex[7], vertex[6] },
+        { vertex[4], vertex[0], vertex[3], vertex[7] },
+        { vertex[4], vertex[5], vertex[1], vertex[0] },
+        { vertex[3], vertex[2], vertex[6], vertex[7] },
+    };
+    
+    static const GLdouble normal[][3] = {
+        { 0.0, 0.0,-1.0 },
+        { 1.0, 0.0, 0.0 },
+        { 0.0, 0.0, 1.0 },
+        {-1.0, 0.0, 0.0 },
+        { 0.0,-1.0, 0.0 },
+        { 0.0, 1.0, 0.0 },
+    };
+
+    // ---- 金属的な質感 ----
+    static const GLfloat metalAmbient[]  = { 0.30f, 0.30f, 0.35f, 1.0f };
+    static const GLfloat metalDiffuse[]  = { 0.55f, 0.55f, 0.60f, 1.0f };
+    static const GLfloat metalSpecular[] = { 0.80f, 0.80f, 0.85f, 1.0f };
+    static const GLfloat metalShine      = 80.0f; // 大きいほど鏡面が鋭い
+
+    // 黒い部分（オプション）
+    static const GLfloat blackAmbient[]  = { 0.05f, 0.05f, 0.05f, 1.0f };
+    static const GLfloat blackDiffuse[]  = { 0.10f, 0.10f, 0.10f, 1.0f };
+    static const GLfloat blackSpecular[] = { 0.20f, 0.20f, 0.20f, 1.0f };
+    static const GLfloat blackShine      = 20.0f;
+
+    int i, j;
+    glPushMatrix();
+    glTranslated(x, y, z);
+
+    glBegin(GL_QUADS);
+    for (j = 0; j < 6; j++) {
+
+        glNormal3dv(normal[j]);
+
+        if (j == numblack) {
+            // 黒い面
+            glMaterialfv(GL_FRONT, GL_AMBIENT, blackAmbient);
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, blackDiffuse);
+            glMaterialfv(GL_FRONT, GL_SPECULAR, blackSpecular);
+            glMaterialf(GL_FRONT, GL_SHININESS, blackShine);
+        } else {
+            // 金属の面
+            glMaterialfv(GL_FRONT, GL_AMBIENT, metalAmbient);
+            glMaterialfv(GL_FRONT, GL_DIFFUSE, metalDiffuse);
+            glMaterialfv(GL_FRONT, GL_SPECULAR, metalSpecular);
+            glMaterialf(GL_FRONT, GL_SHININESS, metalShine);
+        }
+
+        for (i = 4; --i >= 0;) {
+            glVertex3dv(face[j][i]);
+        }
     }
-  }
-  glEnd();
-  glPopMatrix();
+    glEnd();
+
+    glPopMatrix();
 }
 
-void trap(double x,double y,double z){
-  glPushMatrix();
-  glTranslated(x+1,y,z+1);
-  for(int i=0;i<=4;i+=2){
-    for(int j=0;j<=4;j+=2){
-      glPushMatrix();
-        glTranslated(i,0,j);
-        glRotated(-90,1,0,0);
-        glutSolidCone(1,4,15,15);
-      glPopMatrix();
-    }
-  }
-  glPopMatrix();
-}
 
 void texwall_zplus(double x, double y, double z,
              double w, double h,     // 追加: 幅・高さ
@@ -473,6 +484,10 @@ void scene(double t)
   double w = h * (iw / ih); 
   texwall_zplus(-1, 2, -3, w, h, texid_2);
   texwall_xplus(-2, 2, -3, w, h, texid_2);
+
+  // Display doors
+  door(-13.1, 0, -13, 0.3, 3.0, 2.0, 1);
+  door(-13.1, 0, -17, 0.3, 3.0, 2.0, 1);
 }
 
 void textureInit(void) {
