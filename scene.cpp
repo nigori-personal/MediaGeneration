@@ -360,7 +360,7 @@ void trap(double x,double y,double z){
   glPopMatrix();
 }
 
-void texwall(double x, double y, double z,
+void texwall_zplus(double x, double y, double z,
              double w, double h,     // 追加: 幅・高さ
              GLuint tex)
 {
@@ -387,7 +387,32 @@ void texwall(double x, double y, double z,
     glDisable(GL_TEXTURE_2D);
 }
 
+void texwall_xplus(double x, double y, double z,
+                   double width, double height,
+                   GLuint tex)
+{
+    glEnable(GL_TEXTURE_2D);
 
+    glMatrixMode(GL_TEXTURE);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glNormal3d(1.0, 0.0, 0.0);
+
+    glPushMatrix();
+    glTranslated(x, y, z);
+
+    glBegin(GL_QUADS);
+        glTexCoord2d(1.0, 0.0); glVertex3d(0.0, -height/2, 0.0);
+        glTexCoord2d(0.0, 0.0); glVertex3d(0.0, -height/2, width);
+        glTexCoord2d(0.0, 1.0); glVertex3d(0.0,  height/2, width);
+        glTexCoord2d(1.0, 1.0); glVertex3d(0.0,  height/2, 0.0);
+    glEnd();
+
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
+}
 
 bool door1 = false;
 int door1theta = 0;
@@ -444,11 +469,10 @@ void scene(double t)
   // Display textured wall
   double iw = 360.0;
   double ih = 480.0;
-
-  // アスペクト比を維持する
-  double h = 2.0;             // 高さは2にしたい場合
-  double w = h * (iw / ih);   // 幅 = 高さ × (画像の幅/高さ)
-  texwall(-1, 2, -3, w, h, texid_2);
+  double h = 2.0;             
+  double w = h * (iw / ih); 
+  texwall_zplus(-1, 2, -3, w, h, texid_2);
+  texwall_xplus(-2, 2, -3, w, h, texid_2);
 }
 
 void textureInit(void) {
