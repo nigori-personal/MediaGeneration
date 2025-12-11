@@ -32,7 +32,7 @@ extern int collision;
 
 static void init(void)
 {
-  //glewInit(); // if windows
+  // glewInit(); // if windows
 
   // Load Textures
   GLubyte texture_buf2[TEXHEIGHT][TEXWIDTH][4];
@@ -46,82 +46,48 @@ static void init(void)
     perror(texture2);
   }
 
-  glGenTextures(1, &texid_2);  // Generate TextureID
+  glGenTextures(1, &texid_2);           // Generate TextureID
   glBindTexture(GL_TEXTURE_2D, texid_2);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, TEXWIDTH, TEXHEIGHT, GL_RGBA, GL_UNSIGNED_BYTE, texture_buf2);   
+
+  // 安全のため行揃えを1に（RAWデータがRGBなどの場合に重要）
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  // テクスチャパラメータは bind 後に設定
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // 端処理を安全に
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+  // RGBA データを mipmap としてアップロード（360x480 NPOT の場合でも gluBuild2DMipmaps で対応）
+  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, TEXWIDTH, TEXHEIGHT,
+                    GL_RGBA, GL_UNSIGNED_BYTE, texture_buf2);
+
+  // アルファを使うならブレンド／アルファテストの設定（必要に応じて）
+#if USEALPHA
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_ALPHA_TEST);
+  glAlphaFunc(GL_GREATER, 0.5f);
+#else
+  glDisable(GL_BLEND);
+  glDisable(GL_ALPHA_TEST);
+#endif
+
+  // ここで色用テクスチャは完成。別に深度テクスチャを作るなら別IDを使うこと。
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  #if 0
-  // setting mixing colors
-  static const GLfloat blend[] = { 0.0, 1.0, 0.0, 1.0 };
-  glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, blend);
-  #endif
-
-  /*glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, TEXWIDTH, TEXHEIGHT, 0,
-    GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);*/
-  
-  /* �ƥ����������硦�̾�������ˡ�λ��� */
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  
-  /* �ƥ�������η����֤���ˡ�λ��� */
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  
-  /* �񤭹���ݥꥴ��Υƥ��������ɸ�ͤΣҤȥƥ�������Ȥ���Ӥ�Ԥ��褦�ˤ��� */
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-  
-  /* �⤷�Ҥ��ͤ��ƥ���������Ͱʲ��ʤ鿿�ʤĤޤ������� */
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-  
-// #if USEALPHA
-//   /* ��Ӥη�̤򥢥�ե��ͤȤ������� */
-  //glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_ALPHA);
-  
-  /* ����ե��ƥ��Ȥ���Ӵؿ��ʤ������͡� */
-  //glAlphaFunc(GL_GEQUAL, 0.5f);
-// #else
-  /* ��Ӥη�̤����ͤȤ������� */
-  // glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_LUMINANCE);
-// #endif
-  
-  /* �ƥ��������ɸ�˻�����ɸ�Ϥˤ�����ʪ�Τκ�ɸ�ͤ��Ѥ��� */
-  /*glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-  glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-  glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-  glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);*/
-
-  /* ���������ƥ��������ɸ�򤽤Τޤ� (S, T, R, Q) �˻Ȥ� */
-  /*`static const GLdouble genfunc[][4] = {
-    { 1.0, 0.0, 0.0, 0.0 },
-    { 0.0, 1.0, 0.0, 0.0 },
-    { 0.0, 0.0, 1.0, 0.0 },
-    { 0.0, 0.0, 0.0, 1.0 },
-  };
-  glTexGendv(GL_S, GL_EYE_PLANE, genfunc[0]);
-  glTexGendv(GL_T, GL_EYE_PLANE, genfunc[1]);
-  glTexGendv(GL_R, GL_EYE_PLANE, genfunc[2]);
-  glTexGendv(GL_Q, GL_EYE_PLANE, genfunc[3]);
-
-  /* ������� */
+  /* --- 以下はレンダリング初期設定 --- */
   glClearColor(0.0, 0.0, 0.0, 1.0);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
-  
-  /* �����ν������ */
+
   glEnable(GL_LIGHT0);
   glLightfv(GL_LIGHT0, GL_AMBIENT, lightamb);
-  initlight(); // �饤�Ȥν����
+  initlight();
   initCamera();
-
-  // glActiveTexture(GL_TEXTURE1);
-  // textureInit();
-  // glActiveTexture(GL_TEXTURE0);
 }
+
 
 
 /****************************
@@ -238,8 +204,8 @@ static void display(void)
   */
 
   /* �ƥ��������Ѵ���������ꤹ�� */
-  glMatrixMode(GL_TEXTURE);
-  glLoadIdentity();
+  //glMatrixMode(GL_TEXTURE);
+  //glLoadIdentity();
   
   /* �ƥ��������ɸ�� [-1,1] ���ϰϤ� [0,1] ���ϰϤ˼���� */
   glTranslated(0.5, 0.5, 0.5);
