@@ -11,6 +11,8 @@ extern bool door1, door2;
 
 extern double thetax;
 
+extern int collision;
+
 void initCamera(void);
 void setCamera(int x, int y);
 void moveForward(void);

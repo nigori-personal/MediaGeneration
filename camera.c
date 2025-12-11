@@ -15,6 +15,7 @@ camera cam;
 double oneStep = 0.4;
 
 double thetax;
+int collision = 1;
 
 void initCamera(void){
   cam.pos_x = 0.0;
@@ -59,6 +60,7 @@ void moveDown(void){
 }
 
 void makeWall(){
+  if (!collision) return;
   /*if( cam.pos_z >= -8.0 && cam.pos_z<=4 && cam.pos_x >= -2 && cam.pos_x <= 2){
     door1 = true;
   }else{

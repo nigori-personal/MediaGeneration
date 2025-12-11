@@ -26,11 +26,13 @@ GLuint  texid_2;
 static const char texture2[] = "dora-360x480.raw";                        
 int width = TEXWIDTH, height = TEXHEIGHT;
 
+extern int collision;
+
 #define USEALPHA 1  
 
 static void init(void)
 {
-  glewInit(); // if windows
+  //glewInit(); // if windows
 
   // Load Textures
   GLubyte texture_buf2[TEXHEIGHT][TEXWIDTH][4];
@@ -357,6 +359,11 @@ static void keyboard(unsigned char key, int x, int y)
   case 'b': glutIdleFunc(0); break;
   case 'e': initCamera(); break;
   case 'c': person = !person; break;
+
+  case 't':
+      collision = !collision; // ←当たり判定ON/OFF切り替え
+      printf("Collision: %s\n", collision ? "ON" : "OFF");
+      break;
   default:
     break;
   }
