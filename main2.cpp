@@ -32,7 +32,7 @@ extern int collision;
 
 static void init(void)
 {
-  // glewInit(); // if windows
+  glewInit(); // if windows
 
   // Load Textures
   GLubyte texture_buf2[TEXHEIGHT][TEXWIDTH][4];

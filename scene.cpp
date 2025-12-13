@@ -326,46 +326,93 @@ static void door(double x, double y, double z,
         { 0.0, 1.0, 0.0 },
     };
 
-    // ---- 金属的な質感 ----
     static const GLfloat metalAmbient[]  = { 0.30f, 0.30f, 0.35f, 1.0f };
     static const GLfloat metalDiffuse[]  = { 0.55f, 0.55f, 0.60f, 1.0f };
     static const GLfloat metalSpecular[] = { 0.80f, 0.80f, 0.85f, 1.0f };
-    static const GLfloat metalShine      = 80.0f; // 大きいほど鏡面が鋭い
+    static const GLfloat metalShine      = 80.0f;
 
-    // 黒い部分（オプション）
     static const GLfloat blackAmbient[]  = { 0.05f, 0.05f, 0.05f, 1.0f };
     static const GLfloat blackDiffuse[]  = { 0.10f, 0.10f, 0.10f, 1.0f };
     static const GLfloat blackSpecular[] = { 0.20f, 0.20f, 0.20f, 1.0f };
     static const GLfloat blackShine      = 20.0f;
 
+    static const GLfloat knobAmbient[]  = { 0.05f, 0.05f, 0.05f, 1.0f };
+    static const GLfloat knobDiffuse[]  = { 0.10f, 0.10f, 0.10f, 1.0f };
+    static const GLfloat knobSpecular[] = { 0.20f, 0.20f, 0.20f, 1.0f };
+    static const GLfloat knobShine      = 20.0f;
+
+
     int i, j;
     glPushMatrix();
-    glTranslated(x, y, z);
+      glTranslated(x, y, z);
 
-    glBegin(GL_QUADS);
-    for (j = 0; j < 6; j++) {
+      glBegin(GL_QUADS);
+      for (j = 0; j < 6; j++) {
 
-        glNormal3dv(normal[j]);
+          glNormal3dv(normal[j]);
 
-        if (j == numblack) {
-            // 黒い面
-            glMaterialfv(GL_FRONT, GL_AMBIENT, blackAmbient);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, blackDiffuse);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, blackSpecular);
-            glMaterialf(GL_FRONT, GL_SHININESS, blackShine);
-        } else {
-            // 金属の面
-            glMaterialfv(GL_FRONT, GL_AMBIENT, metalAmbient);
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, metalDiffuse);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, metalSpecular);
-            glMaterialf(GL_FRONT, GL_SHININESS, metalShine);
-        }
+          if (j == numblack) {
+              // black aspect
+              glMaterialfv(GL_FRONT, GL_AMBIENT, blackAmbient);
+              glMaterialfv(GL_FRONT, GL_DIFFUSE, blackDiffuse);
+              glMaterialfv(GL_FRONT, GL_SPECULAR, blackSpecular);
+              glMaterialf(GL_FRONT, GL_SHININESS, blackShine);
+          } else {
+              // metal aspect
+              glMaterialfv(GL_FRONT, GL_AMBIENT, metalAmbient);
+              glMaterialfv(GL_FRONT, GL_DIFFUSE, metalDiffuse);
+              glMaterialfv(GL_FRONT, GL_SPECULAR, metalSpecular);
+              glMaterialf(GL_FRONT, GL_SHININESS, metalShine);
+          }
 
-        for (i = 4; --i >= 0;) {
-            glVertex3dv(face[j][i]);
-        }
-    }
-    glEnd();
+          for (i = 4; --i >= 0;) {
+              glVertex3dv(face[j][i]);
+          }
+      }
+      glEnd();
+
+      GLUquadric *q = gluNewQuadric();
+      gluQuadricNormals(q, GLU_SMOOTH);
+
+      /* knob texture */
+      glMaterialfv(GL_FRONT, GL_AMBIENT,  knobAmbient);
+      glMaterialfv(GL_FRONT, GL_DIFFUSE,  knobDiffuse);
+      glMaterialfv(GL_FRONT, GL_SPECULAR, knobSpecular);
+      glMaterialf (GL_FRONT, GL_SHININESS, knobShine);
+
+      glPushMatrix();
+
+      /* knob location */
+      glTranslated(
+          width * 0.1, 
+          height * 0.5, 
+          depth * 0.9 
+      );
+
+      glRotated(-90.0, 0.0, 1.0, 0.0);  
+
+      GLdouble radius = width * 0.25;
+      GLdouble length = width * 0.45;
+
+      gluCylinder(q,
+                  radius/1.5,   // 底面半径
+                  radius,   // 上面半径
+                  length,   // 長さ
+                  24,
+                  4);
+
+      glPushMatrix();
+      glTranslated(0.0, 0.0, length);
+      gluDisk(q,
+              0.0,
+              radius,
+              24,
+              1);
+      glPopMatrix();
+
+      glPopMatrix();
+      gluDeleteQuadric(q);
+
 
     glPopMatrix();
 }
@@ -486,8 +533,8 @@ void scene(double t)
   texwall_xplus(-2, 2, -3, w, h, texid_2);
 
   // Display doors
-  door(-13.1, 0, -13, 0.3, 3.0, 2.0, 1);
-  door(-13.1, 0, -17, 0.3, 3.0, 2.0, 1);
+  door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);
+  door(-13.05, 0, -19, 0.3, 3.0, 2.0, 1);
 }
 
 void textureInit(void) {
