@@ -20,13 +20,14 @@ static const GLfloat lightamb[] = { 0.1, 0.1, 0.1, 1.0 };
 GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
 
 
-#define TEXWIDTH  360 // Texture Width                                
-#define TEXHEIGHT 480 // Texture Height
-GLuint  texid_2; 
-static const char texture2[] = "dora-360x480.raw";                        
+#define TEXWIDTH  1200 // Texture Width                                
+#define TEXHEIGHT 1200 // Texture Height
+/*GLuint  texid_2; 
+static const char texture2[] = "dora-360x480.raw";*/                        
 int width = TEXWIDTH, height = TEXHEIGHT;
 
 extern int collision;
+GLuint exit8_Texture;
 
 #define USEALPHA 1  
 
@@ -35,7 +36,7 @@ static void init(void)
   glewInit(); // if windows
 
   // Load Textures
-  GLubyte texture_buf2[TEXHEIGHT][TEXWIDTH][4];
+  /*GLubyte texture_buf2[TEXHEIGHT][TEXWIDTH][4];
   FILE *fp;
 
   if ((fp = fopen(texture2, "rb")) != NULL) {
@@ -44,35 +45,25 @@ static void init(void)
   }
   else {
     perror(texture2);
-  }
+  }*/
+  cv::Mat picture = cv::imread("./exit8.png", -1);
 
-  glGenTextures(1, &texid_2);           // Generate TextureID
-  glBindTexture(GL_TEXTURE_2D, texid_2);
+  glGenTextures(1, &exit8_Texture);           // Generate TextureID
+  glBindTexture(GL_TEXTURE_2D, exit8_Texture);
 
   // 安全のため行揃えを1に（RAWデータがRGBなどの場合に重要）
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
+  glTexImage2D(GL_TEXTURE_2D, 0, 4, TEXWIDTH, TEXHEIGHT, 0, GL_BGRA, GL_UNSIGNED_BYTE, picture.data);
   // テクスチャパラメータは bind 後に設定
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // 端処理を安全に
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP); // 端処理を安全に
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
   // RGBA データを mipmap としてアップロード（360x480 NPOT の場合でも gluBuild2DMipmaps で対応）
-  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, TEXWIDTH, TEXHEIGHT,
-                    GL_RGBA, GL_UNSIGNED_BYTE, texture_buf2);
-
-  // アルファを使うならブレンド／アルファテストの設定（必要に応じて）
-/*#if USEALPHA
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0.5f);
-#else
-  glDisable(GL_BLEND);
-  glDisable(GL_ALPHA_TEST);
-#endif*/
+  /*gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, TEXWIDTH, TEXHEIGHT,
+                    GL_RGBA, GL_UNSIGNED_BYTE, texture_buf2);*/
 
   // ここで色用テクスチャは完成。別に深度テクスチャを作るなら別IDを使うこと。
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -89,15 +80,6 @@ static void init(void)
   initCamera();
 }
 
-
-
-/****************************
-** GLUT �Υ�����Хå��ؿ� **
-****************************/
-
-/* ������������ؿ������ */
-
-/* ���˥᡼�����Υ������� */
 #define FRAMES 600
 bool person = false;
 
@@ -118,7 +100,7 @@ static void display(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glEnable(GL_LIGHTING);      // ★重要
+    glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
     glRotated(cam.eye_y, 1, 0, 0);
@@ -135,7 +117,6 @@ static void display(void)
     setSpotlight();
     setFluorescentLight();
 
-    /* 状態リセット */
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -215,7 +196,7 @@ static void keyboard(unsigned char key, int x, int y)
 int main(int argc, char *argv[])
 {
   glutInit(&argc, argv);
-  glutInitWindowSize(TEXWIDTH, TEXHEIGHT);
+  glutInitWindowSize(300, 300);
   glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
   glutCreateWindow("exit n");
   glutDisplayFunc(display);

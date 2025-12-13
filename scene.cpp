@@ -579,12 +579,12 @@ void scene(double t)
   box(-27, 5.9, -38.2, 3.0, 0.1, 0.1, 0);
 
   // Display textured wall
-  double iw = 360.0;
-  double ih = 480.0;
+  double iw = 1200.0;
+  double ih = 1200.0;
   double h = 2.0;             
   double w = h * (iw / ih); 
-  texwall_zplus(-1, 2, -3, w, h, texid_2);
-  texwall_xplus(-2.6, 2, 1, w, h, texid_2);
+  texwall_zplus(-1, 2, -3, w, h, exit8_Texture);
+  texwall_xplus(-2.6, 2, 1, w, h, exit8_Texture);
 
   // Display doors
   door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);
