@@ -22,13 +22,14 @@ GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
 #define WINWIDTH 500
 #define WINHEIGHT 500
 
-#define TEXWIDTH  1200 // Texture Width                                
-#define TEXHEIGHT 1200 // Texture Height
+#define TEXWIDTH  1000 // Texture Width                                
+#define TEXHEIGHT 1000 // Texture Height
 /*GLuint  texid_2; 
 static const char texture2[] = "dora-360x480.raw";*/                        
 int width = TEXWIDTH, height = TEXHEIGHT;
 
 extern int collision;
+GLuint exitN_Texture;
 GLuint exit8_Texture;
 
 #define USEALPHA 1  
@@ -48,14 +49,16 @@ static void init(void)
   else {
     perror(texture2);
   }*/
-  cv::Mat picture = cv::imread("./exit8.png", -1);
 
-  glGenTextures(1, &exit8_Texture);           // Generate TextureID
-  glBindTexture(GL_TEXTURE_2D, exit8_Texture);
+  // add new image - exitN
+  cv::Mat picture = cv::imread("./exitN.png", -1);
+
+  glGenTextures(1, &exitN_Texture);           // Generate TextureID
+  glBindTexture(GL_TEXTURE_2D, exitN_Texture);
 
   // 安全のため行揃えを1に（RAWデータがRGBなどの場合に重要）
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  glTexImage2D(GL_TEXTURE_2D, 0, 4, TEXWIDTH, TEXHEIGHT, 0, GL_BGRA, GL_UNSIGNED_BYTE, picture.data);
+  glTexImage2D(GL_TEXTURE_2D, 0, 4, 1000, 1000, 0, GL_BGRA, GL_UNSIGNED_BYTE, picture.data);
   // テクスチャパラメータは bind 後に設定
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP); // 端処理を安全に
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -66,11 +69,24 @@ static void init(void)
   // RGBA データを mipmap としてアップロード（360x480 NPOT の場合でも gluBuild2DMipmaps で対応）
   /*gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, TEXWIDTH, TEXHEIGHT,
                     GL_RGBA, GL_UNSIGNED_BYTE, texture_buf2);*/
-
-  // ここで色用テクスチャは完成。別に深度テクスチャを作るなら別IDを使うこと。
   glBindTexture(GL_TEXTURE_2D, 0);
 
-  /* --- 以下はレンダリング初期設定 --- */
+  // add new image - exit8
+  picture = cv::imread("./exit8.png", -1);
+
+  glGenTextures(1, &exit8_Texture);           // Generate TextureID
+  glBindTexture(GL_TEXTURE_2D, exit8_Texture);
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glTexImage2D(GL_TEXTURE_2D, 0, 4, 1200, 1200, 0, GL_BGRA, GL_UNSIGNED_BYTE, picture.data);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+
   glClearColor(0.0, 0.0, 0.0, 1.0);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
@@ -133,7 +149,7 @@ static void display(void)
 
     glEnable(GL_TEXTURE_2D);
 
-    scene(t);   // ← ここで door / wall が描画される
+    scene(t);
 
     glDisable(GL_TEXTURE_2D);
 

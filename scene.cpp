@@ -498,7 +498,7 @@ void texwall_xplus(double x, double y, double z,
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 
     /* +X 方向を向く */
-    glNormal3d(1.0, 0.0, 0.0);
+    glNormal3d(-1.0, 0.0, 0.0);
 
     glPushMatrix();
     glTranslated(x, y, z);
@@ -579,12 +579,19 @@ void scene(double t)
   box(-27, 5.9, -38.2, 3.0, 0.1, 0.1, 0);
 
   // Display textured wall
-  double iw = 1200.0;
-  double ih = 1200.0;
-  double h = 2.0;             
-  double w = h * (iw / ih); 
+  double iw, ih, h, w;
+  iw = 1000.0;
+  ih = 1000.0;
+  h = 2.0;             
+  w = h * (iw / ih); 
+  texwall_xplus(-2.7, 2, 1, w, h, exitN_Texture);
+  texwall_xplus(-27.7, 2, -39, w, h, exitN_Texture);
+
+  iw = 1200.0;
+  ih = 1200.0;
+  h = 2.0;             
+  w = h * (iw / ih); 
   texwall_zplus(-1, 2, -3, w, h, exit8_Texture);
-  texwall_xplus(-2.6, 2, 1, w, h, exit8_Texture);
 
   // Display doors
   door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);
