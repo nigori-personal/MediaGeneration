@@ -7,3 +7,4 @@ static void box(double x, double y, double z, double width, double height, doubl
 extern GLuint exitN_Texture;
 extern GLuint exit8_Texture;
 extern GLuint dental_Texture;
+extern GLuint parttime_Texture;

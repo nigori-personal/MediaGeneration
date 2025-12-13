@@ -32,6 +32,7 @@ extern int collision;
 GLuint exitN_Texture;
 GLuint exit8_Texture;
 GLuint dental_Texture;
+GLuint parttime_Texture;
 
 #define USEALPHA 1  
 
@@ -102,7 +103,23 @@ static void init(void)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-  glBindTexture(GL_TEXTURE_2D, 0);  
+  glBindTexture(GL_TEXTURE_2D, 0);
+  
+  // add new image - part-time
+  picture = cv::imread("./part-time4.png", -1);
+
+  glGenTextures(1, &parttime_Texture);           // Generate TextureID
+  glBindTexture(GL_TEXTURE_2D, parttime_Texture);
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glTexImage2D(GL_TEXTURE_2D, 0, 4, 500, 700, 0, GL_BGRA, GL_UNSIGNED_BYTE, picture.data);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   // settings
   glClearColor(0.0, 0.0, 0.0, 1.0);
