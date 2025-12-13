@@ -12,6 +12,9 @@
 
 camera cam;
 
+#define WINWIDTH 500
+#define WINHEIGHT 500
+
 double oneStep = 0.4;
 
 double thetax;
@@ -26,8 +29,8 @@ void initCamera(void){
 }
 
 void setCamera(int x, int y){
-  cam.eye_x = 360.0*x/width-180;
-  cam.eye_y = 180.0*y/height-90;
+  cam.eye_x = 360.0*x/WINWIDTH-180;
+  cam.eye_y = 180.0*y/WINHEIGHT-90;
   thetax = M_PI*cam.eye_x/180;
 }
 

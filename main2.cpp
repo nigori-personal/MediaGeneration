@@ -19,6 +19,8 @@ static const GLfloat lightblk[] = { 0.0, 0.0, 0.0, 1.0 };
 static const GLfloat lightamb[] = { 0.1, 0.1, 0.1, 1.0 };
 GLfloat green[] = { 0.0, 1.0, 0.0, 1.0 };
 
+#define WINWIDTH 500
+#define WINHEIGHT 500
 
 #define TEXWIDTH  1200 // Texture Width                                
 #define TEXHEIGHT 1200 // Texture Height
@@ -141,9 +143,9 @@ static void display(void)
 
 static void resize(int w, int h)
 {
-  if (w < TEXWIDTH || h < TEXHEIGHT) {
-    if (w < TEXWIDTH) w = TEXWIDTH;
-    if (h < TEXHEIGHT) h = TEXHEIGHT;
+  if (w < WINWIDTH || h < WINHEIGHT) {
+    if (w < WINWIDTH) w = WINWIDTH;
+    if (h < WINHEIGHT) h = WINHEIGHT;
     glutReshapeWindow(w, h);
   }
   
@@ -196,7 +198,7 @@ static void keyboard(unsigned char key, int x, int y)
 int main(int argc, char *argv[])
 {
   glutInit(&argc, argv);
-  glutInitWindowSize(300, 300);
+  glutInitWindowSize(WINWIDTH, WINHEIGHT);
   glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
   glutCreateWindow("exit n");
   glutDisplayFunc(display);
