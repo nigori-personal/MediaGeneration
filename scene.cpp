@@ -611,6 +611,12 @@ void scene(double t)
   w = h * (iw / ih);
   texwall_xplus(-17.7, 2, -14, w, h, manner_Texture);
 
+  iw = 719.0;
+  ih = 584.0;
+  h = 1;             
+  w = h * (iw / ih);
+  texwall_xplus(-17.7, 2, -18, w, h, security_Texture);
+
   // Display doors
   door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);
   door(-13.05, 0, -19, 0.3, 3.0, 2.0, 1);
