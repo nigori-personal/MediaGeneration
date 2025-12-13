@@ -419,58 +419,112 @@ static void door(double x, double y, double z,
 
 
 void texwall_zplus(double x, double y, double z,
-             double w, double h,     // 追加: 幅・高さ
-             GLuint tex)
+                   double w, double h,
+                   GLuint tex)
 {
-    glEnable(GL_TEXTURE_2D);
+    glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT);
 
+    /* テクスチャ行列リセット */
     glMatrixMode(GL_TEXTURE);
+    glPushMatrix();
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
 
+    /* 自動テクスチャ生成OFF */
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_GEN_R);
+    glDisable(GL_TEXTURE_GEN_Q);
+
+    /* テクスチャ & 透過 */
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+
+    /* +Z 方向を向く */
     glNormal3d(0.0, 0.0, 1.0);
 
     glPushMatrix();
     glTranslated(x, y, z);
 
     glBegin(GL_QUADS);
-      glTexCoord2d(0.0, 1.0); glVertex3d(0.0, -h/2, 0.0);
-      glTexCoord2d(1.0, 1.0); glVertex3d(w,   -h/2, 0.0);
-      glTexCoord2d(1.0, 0.0); glVertex3d(w,    h/2, 0.0);
-      glTexCoord2d(0.0, 0.0); glVertex3d(0.0,  h/2, 0.0);
+        glTexCoord2d(0.0, 1.0);glVertex3d(0.0, -h/2, 0.0);
+        glTexCoord2d(1.0, 1.0);glVertex3d(w, -h/2, 0.0);
+        glTexCoord2d(1.0, 0.0);glVertex3d(w, h/2, 0.0);
+        glTexCoord2d(0.0, 0.0);glVertex3d(0.0, h/2, 0.0);
     glEnd();
 
     glPopMatrix();
-    glDisable(GL_TEXTURE_2D);
-}
 
-void texwall_xplus(double x, double y, double z,
-                   double width, double height,
-                   GLuint tex)
-{
-    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glMatrixMode(GL_TEXTURE);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
+    glPopAttrib();
+}
+
+
+void texwall_xplus(double x, double y, double z,
+                   double w, double h,
+                   GLuint tex)
+{
+    glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT);
+
+    /* テクスチャ行列リセット */
+    glMatrixMode(GL_TEXTURE);
+    glPushMatrix();
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
 
+    /* 自動生成は完全にOFF */
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_GEN_R);
+    glDisable(GL_TEXTURE_GEN_Q);
+
+    /* テクスチャ & 透過 */
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+
+    /* +X 方向を向く */
     glNormal3d(1.0, 0.0, 0.0);
 
     glPushMatrix();
     glTranslated(x, y, z);
 
     glBegin(GL_QUADS);
-        glTexCoord2d(1.0, 0.0); glVertex3d(0.0, -height/2, 0.0);
-        glTexCoord2d(0.0, 0.0); glVertex3d(0.0, -height/2, width);
-        glTexCoord2d(0.0, 1.0); glVertex3d(0.0,  height/2, width);
-        glTexCoord2d(1.0, 1.0); glVertex3d(0.0,  height/2, 0.0);
+        glTexCoord2d(0.0, 0.0);glVertex3d(0.0, h/2, 0.0);
+        glTexCoord2d(1.0, 0.0);glVertex3d(0.0, h/2, w);
+        glTexCoord2d(1.0, 1.0);glVertex3d(0.0, -h/2, w);
+        glTexCoord2d(0.0, 1.0);glVertex3d(0.0, -h/2, 0.0);
     glEnd();
 
     glPopMatrix();
-    glDisable(GL_TEXTURE_2D);
+
+    /* 後始末 */
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glMatrixMode(GL_TEXTURE);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
+    glPopAttrib();
 }
+
+
+
+
 
 bool door1 = false;
 int door1theta = 0;
@@ -530,63 +584,9 @@ void scene(double t)
   double h = 2.0;             
   double w = h * (iw / ih); 
   texwall_zplus(-1, 2, -3, w, h, texid_2);
-  texwall_xplus(-2, 2, -3, w, h, texid_2);
+  texwall_xplus(-2.6, 2, 1, w, h, texid_2);
 
   // Display doors
   door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);
   door(-13.05, 0, -19, 0.3, 3.0, 2.0, 1);
 }
-
-void textureInit(void) {
-    /* �������ɤ߹����Mat�˳�Ǽ */
-    cv::Mat picture = cv::imread("./dora.jpg");    // (". / test.png");
-
-    /* �ɤ߹���������Υ���������� */
-    int TEXWIDTH = picture.size().width;
-    int TEXHEIGHT = picture.size().height;
-
-    // Texture�γ������
-    glGenTextures(1, &m_iTexture);   // ID����
-    glBindTexture(GL_TEXTURE_2D, m_iTexture);  // ����ID�Υƥ��������activate
-
-    /* �ƥ�����������ϥХ���ñ�̤˵ͤ���ޤ�Ƥ��� */
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    /* �ƥ�������γ������ */
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, TEXWIDTH, TEXHEIGHT, 0, GL_BGR, GL_UNSIGNED_BYTE, picture.data); // mipmap�Ȥ�ʤ��ʤ���2������0,�㤦�ʤ�����٤��͡���3�����Ͽ��η�����4,5�ϥƥ�������νĲ����Ǹ�ϥǡ���
-
-    /* �ƥ����������硦�̾�������ˡ�λ��� */
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);   // �ѥ�᡼����Ϣ������
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // ���������礵�줿�Ȥ����䴰��ǽ
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // �������̾����줿�Ȥ����䴰��ǽ
-    //glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-
-    glBindTexture(GL_TEXTURE_2D, 0);  // texture��bind�򳰤��Ƥ����ʰ����Τ����
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-}
-
-
-// glActiveTexture(GL_TEXTURE1);
-  // glEnable(GL_TEXTURE_2D);
-  // glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, red);
-  // glBindTexture(GL_TEXTURE_2D, m_iTexture);
-  // glBegin(GL_QUADS);
-  //   glTexCoord2d(0.0, 0.0);
-  //   glVertex3f(-100, 0, 100);
-  //   glTexCoord2d(1.0, 0.0); 
-  //   glVertex3f(100, 0, 100);
-  //   glTexCoord2d(1.0, 1.0); 
-  //   glVertex3f(100, 0, -100);
-  //   glTexCoord2d(0.0, 1.0); 
-  //   glVertex3f(-100, 0, -100);
-  // glEnd();
-  // glDisable(GL_TEXTURE_2D);
-  // glActiveTexture(GL_TEXTURE0);
-
-  // glPushMatrix();
-  // glTranslated(-9.0, -2.0, -9.0);
-  // textureTile(1.0, 1.0, 18, 18);
-  // glPopMatrix();
-  // ground();

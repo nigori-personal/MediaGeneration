@@ -64,7 +64,7 @@ static void init(void)
                     GL_RGBA, GL_UNSIGNED_BYTE, texture_buf2);
 
   // アルファを使うならブレンド／アルファテストの設定（必要に応じて）
-#if USEALPHA
+/*#if USEALPHA
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_ALPHA_TEST);
@@ -72,7 +72,7 @@ static void init(void)
 #else
   glDisable(GL_BLEND);
   glDisable(GL_ALPHA_TEST);
-#endif
+#endif*/
 
   // ここで色用テクスチャは完成。別に深度テクスチャを作るなら別IDを使うこと。
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -82,6 +82,7 @@ static void init(void)
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
 
+  glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
   glLightfv(GL_LIGHT0, GL_AMBIENT, lightamb);
   initlight();
@@ -102,207 +103,83 @@ bool person = false;
 
 static void display(void)
 {
-  // printf("display\n");
-  GLint viewport[4];       /* �ӥ塼�ݡ��Ȥ���¸�ѡ������� */
-  GLdouble modelview[16];  /* ��ǥ�ӥ塼�Ѵ��������¸�� */
-  GLdouble projection[16]; /* Ʃ���Ѵ��������¸�ѡ������� */
-  static int frame = 0;    /* �ե졼����Υ�����ȡ������� */
-  double t = (double)frame / (double)FRAMES; /* �в���֡� */
+    static int frame = 0;
+    double t = (double)frame / (double)FRAMES;
+    if (++frame >= FRAMES) frame = 0;
 
-  if (++frame >= FRAMES) frame = 0;
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  /*
-  ** �裱���ƥåס��ǥץ��ƥ�������κ���
-  */
-  
-  /* �ǥץ��Хåե��򥯥ꥢ���� */
-  glClear(GL_DEPTH_BUFFER_BIT);
-  
-  /* ���ߤΥӥ塼�ݡ��Ȥ���¸���Ƥ��� */
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  
-  /* �ӥ塼�ݡ��Ȥ�ƥ�������Υ����������ꤹ�� */
-  glViewport(0, 0, TEXWIDTH, TEXHEIGHT);
-  
-  /* ���ߤ�Ʃ���Ѵ��������¸���Ƥ��� */
-  glGetDoublev(GL_PROJECTION_MATRIX, projection);
-  
-  /* Ʃ���Ѵ������ñ�̹�������ꤹ�� */
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  
-  /* �������֤�����Ȥ������󤬻���˼��ޤ�褦��ǥ�ӥ塼�Ѵ���������ꤹ�� */
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  gluPerspective(40.0, (GLdouble)TEXWIDTH / (GLdouble)TEXHEIGHT, 1.0, 100.0);
-  gluLookAt(lightpos[0], lightpos[1], lightpos[2], 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    /* Projection */
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(40.0, 1.0, 1.0, 100.0);
 
-  /* ���ꤷ����ǥ�ӥ塼�Ѵ��������¸���Ƥ��� */
-  glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+    /* ModelView */
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
-  /* �ǥץ��Хåե������Ƥ������������Τǥե졼��Хåե��ˤϽ񤭹��ޤʤ� */
-  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glEnable(GL_LIGHTING);      // ★重要
+    glEnable(GL_LIGHT0);
 
-  /* �������äƱ����դ������פʤΤǥ饤�ƥ��󥰤򥪥դˤ��� */
-  glDisable(GL_LIGHTING);
+    glRotated(cam.eye_y, 1, 0, 0);
+    glRotated(cam.eye_x, 0, 1, 0);
 
-  /* �ǥץ��Хåե��ˤ����̤Υݥꥴ��α��Ԥ���Ͽ����褦�ˤ��� */
-  glCullFace(GL_FRONT);
+    if (!person) {
+        glTranslated(cam.pos_x, cam.pos_y, cam.pos_z);
+    } else {
+        glTranslated(cam.pos_x + sin(thetax) * 4,
+                     cam.pos_y - 2,
+                     cam.pos_z - cos(thetax) * 4);
+    }
 
-  /* ����������褹�� */
-  scene(t);
+    setSpotlight();
+    setFluorescentLight();
 
-  /* �ǥץ��Хåե������Ƥ�ƥ�����������ž������ */
-  glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, TEXWIDTH, TEXHEIGHT);
+    /* 状態リセット */
+    glMatrixMode(GL_TEXTURE);
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
 
-  /* �̾�������������᤹ */
-  glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-  glMatrixMode(GL_PROJECTION);
-  glLoadMatrixd(projection);
-  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-  glEnable(GL_LIGHTING);
-  glCullFace(GL_BACK);
-  
-  /*
-  ** �裲���ƥåס����Τ�����
-  */
-  
-  /* �ե졼��Хåե��ȥǥץ��Хåե��򥯥ꥢ���� */
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-  /* ��ǥ�ӥ塼�Ѵ���������� */
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  
-  /* �����ΰ��֤����ꤹ���ʪ�Τ�������˰�ư�����*/
-  glRotated(cam.eye_y,1,0,0);
-  glRotated(cam.eye_x,0,1,0);
-  if(person == false){
-    glTranslated(cam.pos_x, cam.pos_y, cam.pos_z);
-  }else{
-    glTranslated(cam.pos_x+sin(thetax)*4, cam.pos_y-2, cam.pos_z-cos(thetax)*4);
-  }
-  
-  /* �����ΰ��֤����ꤹ�� */
-  //glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_GEN_R);
+    glDisable(GL_TEXTURE_GEN_Q);
 
-  setSpotlight();
-  setFluorescentLight();
+    glDisable(GL_ALPHA_TEST);
+    glDisable(GL_BLEND);
 
-
-#if USEALPHA
-  /* ���������뤵��Ƥ���ʬ�Ǥ����뤵������ */
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightdim);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, lightblk);
-  
-  /* ����������褹�� */
-  scene(t);
-#endif
-
-  /*
-  ** �裳���ƥåס���������ʬ�����褹��
-  */
-
-  /* �ƥ��������Ѵ���������ꤹ�� */
-  //glMatrixMode(GL_TEXTURE);
-  //glLoadIdentity();
-  
-  /* �ƥ��������ɸ�� [-1,1] ���ϰϤ� [0,1] ���ϰϤ˼���� */
-  glTranslated(0.5, 0.5, 0.5);
-  glScaled(0.5, 0.5, 0.5);
-  
-  /* �ƥ�������Υ�ǥ�ӥ塼�Ѵ������Ʃ���Ѵ�������Ѥ򤫤��� */
-  glMultMatrixd(modelview);
-  
-  if(person == false){
-    glTranslated(-cam.pos_x, -cam.pos_y, -cam.pos_z);
-  }else{
-    glTranslated(-cam.pos_x-sin(thetax)*4, -cam.pos_y+2, -cam.pos_z+cos(thetax)*4);
-  }
-  glRotated(-cam.eye_x,0,1,0);
-  glRotated(-cam.eye_y,1,0,0);
-  // gluLookAt(0, 0, -10, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-  
-  /* ��ǥ�ӥ塼�Ѵ�������᤹ */
-  glMatrixMode(GL_MODELVIEW);
-  
-  /* �ƥ�������ޥåԥ󥰤ȥƥ��������ɸ�μ�ư������ͭ���ˤ��� */
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_TEXTURE_GEN_S);
-  glEnable(GL_TEXTURE_GEN_T);
-  glEnable(GL_TEXTURE_GEN_R);
-  glEnable(GL_TEXTURE_GEN_Q);
-  
-#if USEALPHA
-  /* ����ե��ƥ��Ȥ�ͭ���ˤ��ƱƤ���ʬ���������褹�� */
-  glEnable(GL_ALPHA_TEST);
-  
-  /* ��������ʬ����Ȥο޷��˽Ťͤ��������褦�˱��Ԥ�����Ӵؿ����ѹ����� */
-  glDepthFunc(GL_LEQUAL);
-#endif
-  
-  /* ���������뤵����������ʬ�Ǥ����뤵������ */
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightcol);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, lightcol);
-  
-  /* ����������褹�� */
-  scene(t);
     glEnable(GL_TEXTURE_2D);
-  
-#if USEALPHA
-  /* ���Ԥ�����Ӵؿ��򸵤��᤹ */
-  glDepthFunc(GL_LESS);
-  
-  /* ����ե��ƥ��Ȥ�̵���ˤ��� */
-  glDisable(GL_ALPHA_TEST);
-#endif
-  
-  /* �ƥ�������ޥåԥ󥰤ȥƥ��������ɸ�μ�ư������̵���ˤ��� */
-  glDisable(GL_TEXTURE_GEN_S);
-  glDisable(GL_TEXTURE_GEN_T);
-  glDisable(GL_TEXTURE_GEN_R);
-  glDisable(GL_TEXTURE_GEN_Q);
-  glDisable(GL_TEXTURE_2D);
-  
-  // glBegin(GL_QUADS);
-  //   glNormal3d(0,0,8);
-  //   glNormal3d(1,0,8);
-  //   glNormal3d(1,1,8);
-  //   glNormal3d(0,1,8);
-  // glEnd();
-  
-  /* ���֥�Хåե���� */
-  glutSwapBuffers();
+
+    scene(t);   // ← ここで door / wall が描画される
+
+    glDisable(GL_TEXTURE_2D);
+
+    glutSwapBuffers();
 }
+
 
 static void resize(int w, int h)
 {
-  /* ������ɥ��������ν̾������¤��� */
   if (w < TEXWIDTH || h < TEXHEIGHT) {
     if (w < TEXWIDTH) w = TEXWIDTH;
     if (h < TEXHEIGHT) h = TEXHEIGHT;
     glutReshapeWindow(w, h);
   }
   
-  /* ������ɥ����Τ�ӥ塼�ݡ��Ȥˤ��� */
   glViewport(0, 0, w, h);
-  
-  /* Ʃ���Ѵ�����λ��� */
+
   glMatrixMode(GL_PROJECTION);
-  
-  /* Ʃ���Ѵ�����ν���� */
+
   glLoadIdentity();
   gluPerspective(40.0, (double)w / (double)h, 1.0, 100.0);
 }
 
 void passive_motion(int x, int y){
-  // printf("passive_motion\n");
   setCamera(x,y);
 }
 
 static void idle(void)
 {
-  /* ���̤������ؤ� */
   glutPostRedisplay();
 }
 
@@ -312,7 +189,6 @@ static void keyboard(unsigned char key, int x, int y)
   case 'q':
   case 'Q':
   case '\033':
-    /* ESC �� q �� Q �򥿥��פ����齪λ */
     exit(0);
   
   case 'w': moveForward(); break;
@@ -327,7 +203,7 @@ static void keyboard(unsigned char key, int x, int y)
   case 'c': person = !person; break;
 
   case 't':
-      collision = !collision; // ←当たり判定ON/OFF切り替え
+      collision = !collision;
       printf("Collision: %s\n", collision ? "ON" : "OFF");
       break;
   default:
@@ -336,9 +212,6 @@ static void keyboard(unsigned char key, int x, int y)
   makeWall();
 }
 
-/*
-** �ᥤ��ץ������
-*/
 int main(int argc, char *argv[])
 {
   glutInit(&argc, argv);
@@ -347,7 +220,7 @@ int main(int argc, char *argv[])
   glutCreateWindow("exit n");
   glutDisplayFunc(display);
   glutReshapeFunc(resize);
-  glutPassiveMotionFunc(passive_motion); // �ɥ�å���θƤӽФ�
+  glutPassiveMotionFunc(passive_motion);
   glutKeyboardFunc(keyboard);
   glutIdleFunc(idle);
   init();
