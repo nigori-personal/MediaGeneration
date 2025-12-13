@@ -10,3 +10,4 @@ extern GLuint dental_Texture;
 extern GLuint parttime_Texture;
 extern GLuint manner_Texture;
 extern GLuint security_Texture;
+extern GLuint largeexit_Texture;

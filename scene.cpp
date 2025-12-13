@@ -587,11 +587,11 @@ void scene(double t)
   texwall_xplus(-2.7, 2, 1, w, h, exitN_Texture);
   texwall_xplus(-27.7, 2, -39, w, h, exitN_Texture);
 
-  iw = 1200.0;
+  /*iw = 1200.0;
   ih = 1200.0;
   h = 2.0;             
   w = h * (iw / ih); 
-  texwall_zplus(-1, 2, -3, w, h, exit8_Texture);
+  texwall_zplus(-1, 2, -3, w, h, exit8_Texture);*/
 
   iw = 500.0;
   ih = 700.0;
@@ -616,6 +616,12 @@ void scene(double t)
   h = 1;             
   w = h * (iw / ih);
   texwall_xplus(-17.7, 2, -18, w, h, security_Texture);
+
+  iw = 1920.0;
+  ih = 369.0;
+  h = 0.8;             
+  w = h * (iw / ih);
+  texwall_zplus(-17.5, 5, -11, w, h, largeexit_Texture);  
 
   // Display doors
   door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);
