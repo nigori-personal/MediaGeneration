@@ -593,6 +593,12 @@ void scene(double t)
   w = h * (iw / ih); 
   texwall_zplus(-1, 2, -3, w, h, exit8_Texture);
 
+  iw = 500.0;
+  ih = 700.0;
+  h = 1.5;             
+  w = h * (iw / ih);
+  texwall_xplus(-17.7, 2, -8, w, h, dental_Texture);
+
   // Display doors
   door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);
   door(-13.05, 0, -19, 0.3, 3.0, 2.0, 1);

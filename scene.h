@@ -6,3 +6,4 @@ static void wall(double x, double y, double z, double width, double height, doub
 static void box(double x, double y, double z, double width, double height, double depth, int numblack);
 extern GLuint exitN_Texture;
 extern GLuint exit8_Texture;
+extern GLuint dental_Texture;
