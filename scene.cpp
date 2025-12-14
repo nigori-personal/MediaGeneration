@@ -591,6 +591,10 @@ void scene(double t)
   wall(-38, 0, -40, 10.0, 6.0, 0.2, 0);
   wall(-33, 0, -45, 10.0, 6.0, 0.2, 0);
 
+  // Display doors
+  door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);
+  door(-13.05, 0, -19, 0.3, 3.0, 2.0, 1);
+
   // Display lights
   box(-2, 5.9, 2, 3.0, 0.1, 0.1, 0);
   box(-2, 5.9, 1.8, 3.0, 0.1, 0.1, 0);
@@ -655,8 +659,4 @@ void scene(double t)
   h = 2.7;
   w = h * (iw / ih);
   drawPedestrian(-14.5, 0.0, zpos, w, h, pedestrian_Texture);
-
-  // Display doors
-  door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);
-  door(-13.05, 0, -19, 0.3, 3.0, 2.0, 1);
 }
