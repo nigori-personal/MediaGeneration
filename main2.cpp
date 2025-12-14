@@ -61,17 +61,15 @@ static void init(void)
   glGenTextures(1, &exitN_Texture);           // Generate TextureID
   glBindTexture(GL_TEXTURE_2D, exitN_Texture);
 
-  // 安全のため行揃えを1に（RAWデータがRGBなどの場合に重要）
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glTexImage2D(GL_TEXTURE_2D, 0, 4, 1000, 1000, 0, GL_BGRA, GL_UNSIGNED_BYTE, picture.data);
-  // テクスチャパラメータは bind 後に設定
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP); // 端処理を安全に
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-  // RGBA データを mipmap としてアップロード（360x480 NPOT の場合でも gluBuild2DMipmaps で対応）
   /*gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, TEXWIDTH, TEXHEIGHT,
                     GL_RGBA, GL_UNSIGNED_BYTE, texture_buf2);*/
   glBindTexture(GL_TEXTURE_2D, 0);

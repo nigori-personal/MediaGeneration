@@ -64,39 +64,6 @@ void moveDown(void){
 
 void makeWall(){
   if (!collision) return;
-  /*if( cam.pos_z >= -8.0 && cam.pos_z<=4 && cam.pos_x >= -2 && cam.pos_x <= 2){
-    door1 = true;
-  }else{
-    door1 = false;
-  }
-  if(cam.pos_z >= 0.5 && cam.pos_z <= 10 && cam.pos_x >= 5 && cam.pos_x <= 10){
-    door2 = true;
-  }else{
-    door2 = false;
-  }
-  if(door1 == false){
-    if(cam.pos_z>-1.5 && cam.pos_z <0){
-      if(cam.pos_x <21.5 && cam.pos_x >-6.5){
-        cam.pos_z=-1.5;
-      }
-    }else if(cam.pos_z>=0 && cam.pos_z <1.5){
-      if(cam.pos_x <21.5 && cam.pos_x >-6.5){
-        cam.pos_z = 1.5;
-      }
-    }
-  }
-
-  if(door2 == false){
-    if(cam.pos_z>4.5 && cam.pos_z <6.0){
-      if(cam.pos_x <15.5 && cam.pos_x >-6.5){
-        cam.pos_z=4.5;
-      }
-    }else if(cam.pos_z>=6.0 && cam.pos_z <7.5){
-      if(cam.pos_x <15.5 && cam.pos_x >-6.5){
-        cam.pos_z = 7.5;
-      }
-    }
-  }*/
 
   // collision detection
   if(cam.pos_z <= -11 && cam.pos_z > -15){
@@ -169,6 +136,5 @@ void makeWall(){
     cam.pos_z = 27;
 
   }
-  
-  // printf("%f %f %f\n",cam.pos_x,cam.pos_y,cam.pos_z);
+
 }

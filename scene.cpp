@@ -147,10 +147,10 @@ static void drawTileQuad(GLdouble v0[3], GLdouble v1[3], GLdouble v2[3], GLdoubl
     static const GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
     static const GLfloat white[] = {1.0, 1.0, 1.0, 1.0};
 
-    double margin = 0.05;  // タイル枠の太さ
-    double offset = 0.01;  // 白タイルを外側に押し出す距離
+    double margin = 0.05;  // tile frame
+    double offset = 0.01;  // white tile
 
-    /* ---- 黒タイル（外側） ---- */
+    /* black tile */
     glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, black);
     glBegin(GL_QUADS);
     glVertex3dv(v0);
@@ -159,7 +159,7 @@ static void drawTileQuad(GLdouble v0[3], GLdouble v1[3], GLdouble v2[3], GLdoubl
     glVertex3dv(v3);
     glEnd();
 
-    /* ---- 白タイル（内側） ---- */
+    /* white tile */
     GLdouble w0[3], w1[3], w2[3], w3[3];
 
     for (int i = 0; i < 3; i++) {
@@ -169,7 +169,6 @@ static void drawTileQuad(GLdouble v0[3], GLdouble v1[3], GLdouble v2[3], GLdoubl
         w3[i] = v3[i] + (v2[i] - v3[i]) * margin + (v0[i] - v3[i]) * margin;
     }
 
-    /* ---- 白タイルを法線方向に押し出す ---- */
     for (int i = 0; i < 3; i++) {
         w0[i] += normal[i] * offset;
         w1[i] += normal[i] * offset;
@@ -193,20 +192,19 @@ static void wall(double x, double y, double z,
     glPushMatrix();
     glTranslated(x, y, z);
 
-    double tile = 0.5;  // タイル 0.5 × 0.5
+    double tile = 0.5;  // tile 0.5 x 0.5
 
-    /* 面の法線 */
+    /* aspects */
     const GLdouble normals[6][3] = {
-        {  0,  0, -1 }, // Z=0（前）
-        {  0,  0,  1 }, // Z=depth（後）
-        {  1,  0,  0 }, // X=width（右）
-        { -1,  0,  0 }, // X=0（左）
-        {  0, -1,  0 }, // Y=0（底）
-        {  0,  1,  0 }, // Y=height（天井）
+        {  0,  0, -1 }, // Z=0
+        {  0,  0,  1 }, // Z=depth
+        {  1,  0,  0 }, // X=width
+        { -1,  0,  0 }, // X=0
+        {  0, -1,  0 }, // Y=0
+        {  0,  1,  0 }, // Y=height
     };
-    /*===========================
-        Z = 0 面（前面）
-    ===========================*/
+
+    // Z = 0 面（前面）
     glNormal3dv(normals[0]);
     for(double iy = 0; iy < height; iy += tile){
         for(double ix = 0; ix < width; ix += tile){
@@ -218,9 +216,7 @@ static void wall(double x, double y, double z,
         }
     }
 
-    /*===========================
-        Z = depth 面（背面）
-    ===========================*/
+    // Z = depth
     glNormal3dv(normals[1]); // {0, 0, 1}
 
     for(double iy = 0; iy < height; iy += tile){
@@ -235,9 +231,7 @@ static void wall(double x, double y, double z,
         }
     }
 
-    /*===========================
-        X = 0 面（左）
-    ===========================*/
+    // X = 0
     glNormal3dv(normals[3]);
     for(double iy = 0; iy < height; iy += tile){
         for(double iz = 0; iz < depth; iz += tile){
@@ -249,9 +243,7 @@ static void wall(double x, double y, double z,
         }
     }
 
-    /*===========================
-        X = width 面（右）
-    ===========================*/
+    // X = width
     glNormal3dv(normals[2]); // {1,0,0}
     for(double iy = 0; iy < height; iy += tile){
         for(double iz = 0; iz < depth; iz += tile){
@@ -263,9 +255,8 @@ static void wall(double x, double y, double z,
         }
     }
 
-    /*===========================
-        Y = 0 面（底）
-    ===========================*/
+
+    // Y = 0
     glNormal3dv(normals[4]);
     for(double ix = 0; ix < width; ix += tile){
         for(double iz = 0; iz < depth; iz += tile){
@@ -277,9 +268,7 @@ static void wall(double x, double y, double z,
         }
     }
 
-    /*===========================
-        Y = height 面（天井）
-    ===========================*/
+    // Y = height
     glNormal3dv(normals[5]);
     for(double ix = 0; ix < width; ix += tile){
         for(double iz = 0; iz < depth; iz += tile){
@@ -395,9 +384,9 @@ static void door(double x, double y, double z,
       GLdouble length = width * 0.45;
 
       gluCylinder(q,
-                  radius/1.5,   // 底面半径
-                  radius,   // 上面半径
-                  length,   // 長さ
+                  radius/1.5,   // bottom
+                  radius,   // top
+                  length,
                   24,
                   4);
 
@@ -424,19 +413,18 @@ void texwall_zplus(double x, double y, double z,
 {
     glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT);
 
-    /* テクスチャ行列リセット */
+    // reset texture
     glMatrixMode(GL_TEXTURE);
     glPushMatrix();
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
 
-    /* 自動テクスチャ生成OFF */
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
     glDisable(GL_TEXTURE_GEN_R);
     glDisable(GL_TEXTURE_GEN_Q);
 
-    /* テクスチャ & 透過 */
+    // set texture
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex);
 
@@ -445,7 +433,6 @@ void texwall_zplus(double x, double y, double z,
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 
-    /* +Z 方向を向く */
     glNormal3d(0.0, 0.0, 1.0);
 
     glPushMatrix();
@@ -476,19 +463,18 @@ void texwall_xplus(double x, double y, double z,
 {
     glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT);
 
-    /* テクスチャ行列リセット */
+    // reset texture
     glMatrixMode(GL_TEXTURE);
     glPushMatrix();
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
 
-    /* 自動生成は完全にOFF */
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
     glDisable(GL_TEXTURE_GEN_R);
     glDisable(GL_TEXTURE_GEN_Q);
 
-    /* テクスチャ & 透過 */
+    // set texture
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex);
 
@@ -497,7 +483,6 @@ void texwall_xplus(double x, double y, double z,
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 
-    /* +X 方向を向く */
     glNormal3d(-1.0, 0.0, 0.0);
 
     glPushMatrix();
@@ -512,7 +497,6 @@ void texwall_xplus(double x, double y, double z,
 
     glPopMatrix();
 
-    /* 後始末 */
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glMatrixMode(GL_TEXTURE);
@@ -521,16 +505,6 @@ void texwall_xplus(double x, double y, double z,
 
     glPopAttrib();
 }
-
-
-
-
-
-bool door1 = false;
-int door1theta = 0;
-
-bool door2 = false;
-int door2theta = 0;
 
 void scene(double t)
 {

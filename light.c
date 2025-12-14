@@ -32,8 +32,8 @@ void rmlight(){
 
 GLfloat lightPosition[4] ;
 GLfloat lightDiffuse[3];
-GLfloat lightAmbient[3]  = { 0.1, 0.1, 0.1 }; //環境光
-GLfloat lightSpecular[3] = { 1.0,   1.0, 1.0  }; //鏡面光
+GLfloat lightAmbient[3]  = { 0.1, 0.1, 0.1 };
+GLfloat lightSpecular[3] = { 1.0,   1.0, 1.0  };
 GLfloat spotDirrection[3];
 
 // fluorescent
@@ -67,9 +67,9 @@ void regLight(GLenum light){
   glLightfv(light, GL_AMBIENT,  lightAmbient);
   glLightfv(light, GL_SPECULAR, lightSpecular);
   glLightf( light, GL_LINEAR_ATTENUATION, 0.01);
-  glLightfv( light, GL_SPOT_DIRECTION, spotDirrection ); //スポットライトの向ける方向（デフォルト (0,0,-1.0)）
-  glLightf( light, GL_SPOT_CUTOFF,  20.0 );// スポットライトの絞り（デフォルト 180.0）
-  glLightf( light, GL_SPOT_EXPONENT, 0 );// スポットライトの中心からの減衰の度合い（デフォルト 0）
+  glLightfv( light, GL_SPOT_DIRECTION, spotDirrection );
+  glLightf( light, GL_SPOT_CUTOFF,  20.0 );
+  glLightf( light, GL_SPOT_EXPONENT, 0 );
 }
 
 void setFluorescentPos(GLfloat x, GLfloat y, GLfloat z){
@@ -92,42 +92,6 @@ void regFluorescent(GLenum light){
 }
 
 void setSpotlight(){
-  /*setLightPos(-5, 4.0, -5.0);//光源の位置
-  setLightDif(0.6,  0.4, 0.1); //拡散光
-  setLightDir(0, -1.0, 0.3);//スポットライトを向ける方向
-  regLight(GL_LIGHT1);*/
-
-  /*setLightPos(-10, 4.0, -1.0);//光源の位置
-  setLightDif(0.6,  0.4, 0.1); //拡散光
-  setLightDir(0, -1.0, -0.3);//スポットライトを向ける方向
-  regLight(GL_LIGHT2);
-
-  setLightPos(-19, 4.0, -10.0);//光源の位置
-  setLightDif(0.6,  0.4, 0.1); //拡散光
-  setLightDir(0.3, -1.0, 0);//スポットライトを向ける方向
-  regLight(GL_LIGHT3);
-
-  setLightPos(-8.0, 30.0, -10.0);//光源の位置
-  setLightDif(0.0,  0.0, 0.2); //拡散光
-  setLightDir(0, -1.0, 0);//スポットライトを向ける方向
-  glLightf( GL_LIGHT4, GL_SPOT_CUTOFF,  30.0 );// スポットライトの絞り（デフォルト 180.0
-  regLight(GL_LIGHT4);
-
-  setLightPos(-19, 4.0, -2.0);//光源の位置
-  setLightDif(0.6,  0.4, 0.1); //拡散光
-  setLightDir(0.3, -1.0, 0);//スポットライトを向ける方向
-  regLight(GL_LIGHT5);
-
-  setLightPos(-19, 4.0, -19.0);//光源の位置
-  setLightDif(0.6,  0.4, 0.1); //拡散光
-  setLightDir(0.3, -1.0, 0);//スポットライトを向ける方向
-  regLight(GL_LIGHT6);
-
-  setLightPos(4, 4.0, -1.0);//光源の位置
-  setLightDif(0.6,  0.4, 0.1); //拡散光
-  setLightDir(0, -1.0, -0.3);//スポットライトを向ける方向
-  regLight(GL_LIGHT7);*/
-
   setLightPos(-0.5, 5.7, 2);
   setLightDif(0.2, 0.2, 0.2);
   setLightDir(0, -1.0, 0);
