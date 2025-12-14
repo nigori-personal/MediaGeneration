@@ -11,6 +11,7 @@
 #include "camera.h"
 
 #define PI 3.1415926535897932384626433832795 
+#define FRAMES 600
 
 GLuint m_iTexture;
 
@@ -506,6 +507,54 @@ void texwall_xplus(double x, double y, double z,
     glPopAttrib();
 }
 
+void drawPedestrian(double x, double y, double z,
+                    double w, double h,
+                    GLuint tex)
+{
+    glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT);
+
+    // reset texture
+    glMatrixMode(GL_TEXTURE);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+
+    glDisable(GL_TEXTURE_GEN_S);
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_GEN_R);
+    glDisable(GL_TEXTURE_GEN_Q);
+
+    // set texture
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+
+    glNormal3d(0.0, 0.0, 1.0);
+
+    glPushMatrix();
+    glTranslated(x, y, z);
+
+    glBegin(GL_QUADS);
+        glTexCoord2d(0.0, 0.0);glVertex3d(-w * 0.5, 0.0, 0.0);
+        glTexCoord2d(1.0, 0.0);glVertex3d( w * 0.5, 0.0, 0.0);
+        glTexCoord2d(1.0, 1.0);glVertex3d( w * 0.5, h, 0.0);
+        glTexCoord2d(0.0, 1.0);glVertex3d(-w * 0.5, h, 0.0);
+    glEnd();
+
+    glPopMatrix();
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glMatrixMode(GL_TEXTURE);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
+    glPopAttrib();
+}
+
 void scene(double t)
 {
   static const GLfloat red[] = { 0.8, 0.2, 0.2, 1.0 };
@@ -596,6 +645,16 @@ void scene(double t)
   h = 0.8;             
   w = h * (iw / ih);
   texwall_zplus(-17.5, 5, -11, w, h, largeexit_Texture);  
+
+  // Display pedestrian
+  static double zpos = -25.0;
+  double speed = 6.0;
+  zpos += speed / FRAMES;
+  iw = 198.0;
+  ih = 540.0;
+  h = 2.7;
+  w = h * (iw / ih);
+  drawPedestrian(-14.5, 0.0, zpos, w, h, pedestrian_Texture);
 
   // Display doors
   door(-13.05, 0, -13, 0.3, 3.0, 2.0, 1);

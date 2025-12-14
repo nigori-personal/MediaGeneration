@@ -11,3 +11,4 @@ extern GLuint parttime_Texture;
 extern GLuint manner_Texture;
 extern GLuint security_Texture;
 extern GLuint largeexit_Texture;
+extern GLuint pedestrian_Texture;
